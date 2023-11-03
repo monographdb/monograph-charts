@@ -3,9 +3,9 @@ entries:
   monograph-operator:
   - apiVersion: v1
     appVersion: 1.2.2
-    created: "2023-11-02T19:19:05.808163488+08:00"
+    created: "2023-11-03T11:55:48.447873104+08:00"
     description: monograph-operator Helm chart for Kubernetes
-    digest: 667d99a39a7b01d06e3f3edbfa8604ac9fd0cc2f19dd47d72aaaf408b732a0fd
+    digest: 343c120827cad8469e4cee7fc14d3513ae5763957461f77285e3b33462ef22dc
     keywords:
     - database
     - newsql
@@ -20,4 +20,4 @@ entries:
     urls:
     - https://github.com/monographdb/monograph-charts/releases/download/v0.2.0/monograph-operator-1.2.2.tgz
     version: 1.2.2
-generated: "2023-11-02T19:19:05.80753133+08:00"
+generated: "2023-11-03T11:55:48.446991025+08:00"
