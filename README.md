@@ -3,8 +3,6 @@
 This chart is used to install `monograph operator` and `MonographDBCluster` related CRD. Please refer to the following
 commands for details.
 
-***Note: Currently only monograph operator installation is supported.***
-
 ### Install
 
 [Helm](https://helm.sh) must be installed to use the charts. Please refer to
