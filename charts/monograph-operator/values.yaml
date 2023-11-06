@@ -1,0 +1,34 @@
+# Default values for monograph-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## @section Name parameters
+## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
+##
+nameOverride: monograph-controller-manager
+timezone: UTC
+appendReleaseSuffix: false
+
+## controller manager
+controllerManager:
+  serviceAccount: "monograph-operator-sa"
+  image:
+    repository: 831875755683.dkr.ecr.ap-northeast-1.amazonaws.com/monograph-operator
+    tag: test
+    pullPolicy: IfNotPresent
+  ## In case the above image is pulled from a registry that requires
+  ## authentication, a secret containining credentials can be added
+  ## imagePullSecrets:
+  ##   - secret_with_credentials_to_custom_registry
+  imagePullSecrets: { }
+  resources:
+    requests:
+      cpu: 2
+      memory: "512Mi"
+    limits:
+      cpu: 2
+      memory: 1G
+  healthAddr: ":18081"
+  metricsAddr: ":18080"
+  healthPort: 18081
+  env: [ ]
