@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.1
   creationTimestamp: null
-  name: monographdbclusters.kuixian.monograph-service.monographdb.com
+  name: monographdbclusters.monograph-service.monographdb.com
 spec:
-  group: kuixian.monograph-service.monographdb.com
+  group: monograph-service.monographdb.com
   names:
     categories:
     - all
@@ -344,6 +344,10 @@ spec:
                           type: string
                         type: array
                     type: object
+                  enableMetrics:
+                    default: "off"
+                    description: 'If specified, enable metrics Default: off'
+                    type: string
                   image:
                     description: Image of the MonographDB component.  (Log/Tx)
                     type: string
@@ -438,6 +442,49 @@ spec:
                           to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                         type: object
                     type: object
+                  rocksdbCloud:
+                    description: RocksDBCloud Related settings of RocksDBCloud.
+                    properties:
+                      cloudObjectStorage:
+                        description: CloudObjectStoreSpec
+                        properties:
+                          bucketName:
+                            description: BucketName
+                            type: string
+                          bucketPrefix:
+                            description: BucketPrefix
+                            type: string
+                          cloudStoreType:
+                            description: Cloud provider object storage type, s3 (aws
+                              s3) or gcs (google cloud storage)
+                            type: string
+                          region:
+                            description: Region Cloud provider object storage region
+                            type: string
+                        required:
+                        - bucketName
+                        - bucketPrefix
+                        - region
+                        type: object
+                      fileDeletionDelay:
+                        default: 3600
+                        description: FileDeletionDelay The file deletion delay for
+                          RocksDB Cloud files
+                        format: int32
+                        type: integer
+                      readyTimeout:
+                        default: 10
+                        description: ReadyTimeout Timeout before RocksDB Cloud becoming
+                          ready on new log group leader
+                        format: int32
+                        type: integer
+                      sstFileCacheSize:
+                        default: 3GB
+                        description: SSTFileCacheSize Local sst cache size
+                        type: string
+                    required:
+                    - cloudObjectStorage
+                    type: object
                   rpcPort:
                     default: 7001
                     description: 'RPC Port of the LogService. Default: 7001'
@@ -495,20 +542,20 @@ spec:
                         type: object
                         x-kubernetes-map-type: atomic
                       policyType:
-                        default: required
+                        default: preferred
                         description: 'PolicyType The scheduling policy type is used
                           to specify the behavior of the controller when the resource
                           does not meet the scheduling policy.. Default: required'
                         enum:
-                        - prefer
+                        - preferred
                         - required
                         type: string
-                      preferZone:
-                        description: PreferZone If configured, the service prefers
+                      preferredZone:
+                        description: PreferredZone If configured, the service prefers
                           to be deployed in that availability zone.
                         type: string
                     required:
-                    - preferZone
+                    - preferredZone
                     type: object
                   serviceAccountName:
                     description: ServiceAccountName For accessing aws resources. (DynamoDB,
@@ -559,7 +606,10 @@ spec:
                     description: Version of MonographDB.
                     type: string
                 required:
+                - dataStore
                 - image
+                - rocksdbCloud
+                - serviceAccountName
                 type: object
               store:
                 description: StorageService spec
@@ -586,6 +636,8 @@ spec:
                   storageType:
                     description: KV storage type, cass (cassandra) or dynamodb
                     type: string
+                required:
+                - storageType
                 type: object
               tx:
                 description: TxService spec
@@ -921,6 +973,10 @@ spec:
                       related mostly to :https://jira.mariadb.org/browse/MDEV-21456)
                       Default: false'
                     type: boolean
+                  enableMetrics:
+                    default: "off"
+                    description: 'If specified, enable metrics Default: off'
+                    type: string
                   externalIps:
                     description: TxService external Ip
                     items:
@@ -1086,20 +1142,20 @@ spec:
                         type: object
                         x-kubernetes-map-type: atomic
                       policyType:
-                        default: required
+                        default: preferred
                         description: 'PolicyType The scheduling policy type is used
                           to specify the behavior of the controller when the resource
                           does not meet the scheduling policy.. Default: required'
                         enum:
-                        - prefer
+                        - preferred
                         - required
                         type: string
-                      preferZone:
-                        description: PreferZone If configured, the service prefers
+                      preferredZone:
+                        description: PreferredZone If configured, the service prefers
                           to be deployed in that availability zone.
                         type: string
                     required:
-                    - preferZone
+                    - preferredZone
                     type: object
                   serviceAccountName:
                     description: ServiceAccountName For accessing aws resources. (DynamoDB,
@@ -1159,8 +1215,8 @@ spec:
                     description: Transaction config of TxService
                     properties:
                       enableMVCC:
-                        default: "off"
-                        description: 'Whether to enable MVCC. Default: off'
+                        default: "OFF"
+                        description: 'Whether to enable MVCC. Default: OFF'
                         type: string
                       isolation:
                         default: READ-COMMITTED
@@ -1176,8 +1232,14 @@ spec:
                     description: Version of MonographDB.
                     type: string
                 required:
+                - dataStore
                 - image
+                - serviceAccountName
                 type: object
+            required:
+            - log
+            - store
+            - tx
             type: object
           status:
             description: MonographDBClusterStatus defines the observed state of MonographDBCluster

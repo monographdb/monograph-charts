@@ -14,7 +14,7 @@ controllerManager:
   serviceAccount: "monograph-operator-sa"
   image:
     repository: 831875755683.dkr.ecr.ap-northeast-1.amazonaws.com/monograph-operator
-    tag: test
+    tag: latest
     pullPolicy: IfNotPresent
   ## In case the above image is pulled from a registry that requires
   ## authentication, a secret containining credentials can be added
