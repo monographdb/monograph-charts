@@ -30,7 +30,7 @@ spec:
       containers:
         - name: monograph-controller-manager
           image: {{ .Values.controllerManager.image.repository }}:{{ .Values.controllerManager.image.tag }}
-          imagePullPolicy: {{ .Values.controllerManager.image.pullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ .Values.controllerManager.imagePullPolicy | default "IfNotPresent" }}
           command:
             - /manager
           args:
