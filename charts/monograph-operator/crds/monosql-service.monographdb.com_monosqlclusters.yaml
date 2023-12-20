@@ -43,6 +43,10 @@ spec:
               log:
                 description: LogService spec
                 properties:
+                  clusterWatcherServiceURL:
+                    default: http://cluster-watcher-srv.mono-cluster-watcher-system.svc.cluster.local:9000/api/v1/get-pod-zone
+                    description: ClusterWatcherURL
+                    type: string
                   crossZone:
                     default: false
                     description: CrossZone If configured, the service is deployed
@@ -202,7 +206,8 @@ spec:
                                       defined in spec.resourceClaims, that are used
                                       by this container. \n This is an alpha field
                                       and requires enabling the DynamicResourceAllocation
-                                      feature gate. \n This field is immutable."
+                                      feature gate. \n This field is immutable. It
+                                      can only be set for containers."
                                     items:
                                       description: ResourceClaim references one entry
                                         in PodSpec.ResourceClaims.
@@ -241,8 +246,8 @@ spec:
                                       of compute resources required. If Requests is
                                       omitted for a container, it defaults to Limits
                                       if that is explicitly specified, otherwise to
-                                      an implementation-defined value. More info:
-                                      https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                                      an implementation-defined value. Requests cannot
+                                      exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
                                 type: object
                               selector:
@@ -381,19 +386,24 @@ spec:
                       1'
                     format: int32
                     type: integer
+                    x-kubernetes-validations:
+                    - message: For now LogReplica is immutable
+                      rule: self == oldSelf
                   logReplica:
                     default: 3
                     description: 'Number of members in the LogGroup Default: 3'
                     format: int32
                     type: integer
+                    x-kubernetes-validations:
+                    - message: For now LogReplica is immutable
+                      rule: self == oldSelf
                   maxUnavailable:
                     anyOf:
                     - type: integer
                     - type: string
-                    default: 20%
+                    default: 10%
                     description: 'The maximum number of pods that can be unavailable
-                      during a rolling update. This number is set in the PodDistruptionBudget
-                      and defaults to 1. Default: 20%'
+                      during a rolling update. Default: 10%'
                     x-kubernetes-int-or-string: true
                   resources:
                     description: Resources of the MonographDB component.
@@ -402,7 +412,8 @@ spec:
                         description: "Claims lists the names of resources, defined
                           in spec.resourceClaims, that are used by this container.
                           \n This is an alpha field and requires enabling the DynamicResourceAllocation
-                          feature gate. \n This field is immutable."
+                          feature gate. \n This field is immutable. It can only be
+                          set for containers."
                         items:
                           description: ResourceClaim references one entry in PodSpec.ResourceClaims.
                           properties:
@@ -439,7 +450,8 @@ spec:
                         description: 'Requests describes the minimum amount of compute
                           resources required. If Requests is omitted for a container,
                           it defaults to Limits if that is explicitly specified, otherwise
-                          to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                          to an implementation-defined value. Requests cannot exceed
+                          Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                         type: object
                     type: object
                   rocksdbCloud:
@@ -561,6 +573,11 @@ spec:
                     description: ServiceAccountName For accessing aws resources. (DynamoDB,
                       EBS, ELB)
                     type: string
+                  storageClassDiskType:
+                    default: gp3
+                    description: 'Cloud provisioned network storage disk type Default:
+                      gp3'
+                    type: string
                   tolerations:
                     description: If specified, the pod's tolerations.
                     items:
@@ -639,6 +656,9 @@ spec:
                 required:
                 - storageType
                 type: object
+              timezone:
+                description: TimeZone
+                type: string
               tx:
                 description: TxService spec
                 properties:
@@ -825,7 +845,8 @@ spec:
                                       defined in spec.resourceClaims, that are used
                                       by this container. \n This is an alpha field
                                       and requires enabling the DynamicResourceAllocation
-                                      feature gate. \n This field is immutable."
+                                      feature gate. \n This field is immutable. It
+                                      can only be set for containers."
                                     items:
                                       description: ResourceClaim references one entry
                                         in PodSpec.ResourceClaims.
@@ -864,8 +885,8 @@ spec:
                                       of compute resources required. If Requests is
                                       omitted for a container, it defaults to Limits
                                       if that is explicitly specified, otherwise to
-                                      an implementation-defined value. More info:
-                                      https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                                      an implementation-defined value. Requests cannot
+                                      exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
                                 type: object
                               selector:
@@ -1023,10 +1044,9 @@ spec:
                     anyOf:
                     - type: integer
                     - type: string
-                    default: 20%
+                    default: 10%
                     description: 'The maximum number of pods that can be unavailable
-                      during a rolling update. This number is set in the PodDistruptionBudget
-                      and defaults to 1. Default: 20%'
+                      during a rolling update. Default: 10%'
                     x-kubernetes-int-or-string: true
                   metricPort:
                     default: 18081
@@ -1043,6 +1063,9 @@ spec:
                     description: 'Replicas of Pods TxService. Default: 3'
                     format: int32
                     type: integer
+                    x-kubernetes-validations:
+                    - message: For now TxService Replica is immutable
+                      rule: self == oldSelf
                   resources:
                     description: Resources of the MonographDB component.
                     properties:
@@ -1050,7 +1073,8 @@ spec:
                         description: "Claims lists the names of resources, defined
                           in spec.resourceClaims, that are used by this container.
                           \n This is an alpha field and requires enabling the DynamicResourceAllocation
-                          feature gate. \n This field is immutable."
+                          feature gate. \n This field is immutable. It can only be
+                          set for containers."
                         items:
                           description: ResourceClaim references one entry in PodSpec.ResourceClaims.
                           properties:
@@ -1087,7 +1111,8 @@ spec:
                         description: 'Requests describes the minimum amount of compute
                           resources required. If Requests is omitted for a container,
                           it defaults to Limits if that is explicitly specified, otherwise
-                          to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                          to an implementation-defined value. Requests cannot exceed
+                          Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                         type: object
                     type: object
                   schedulePolicy:
@@ -1166,6 +1191,11 @@ spec:
                     description: 'The SQL Port number Default: 3300'
                     format: int32
                     type: integer
+                  storageClassDiskType:
+                    default: gp3
+                    description: 'Cloud provisioned network storage disk type Default:
+                      gp3'
+                    type: string
                   tolerations:
                     description: If specified, the pod's tolerations.
                     items:
@@ -1259,9 +1289,6 @@ spec:
                 description: condition of list MonographDB status change
                 items:
                   properties:
-                    clusterStatus:
-                      description: ClusterStatus of the MonographDB cluster
-                      type: string
                     lastTransitionTime:
                       description: The time when the condition was updated.
                       format: date-time
@@ -1269,16 +1296,28 @@ spec:
                     status:
                       description: MonographCluster condition status.
                       type: string
+                    type:
+                      description: Type of the MonographDB cluster
+                      type: string
                   required:
-                  - clusterStatus
                   - lastTransitionTime
                   - status
+                  - type
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
               logStatus:
                 default: LogSrvNotReady
                 description: Status of the MonographDB LogService
                 type: string
+              observedGeneration:
+                description: Observed generation by controller. It will be updated
+                  when controller observes the changes on the spec and going to sync
+                  the subresources.
+                format: int64
+                type: integer
               storageStatus:
                 default: StorageSrvRunning
                 description: Status of the external storage service(DynamoDB | Cassandra).
@@ -1289,6 +1328,7 @@ spec:
                 type: string
             required:
             - clusterName
+            - conditions
             type: object
         type: object
     served: true
