@@ -27,8 +27,9 @@ controllerManager:
       memory: "512Mi"
     limits:
       cpu: 2
-      memory: 1G
+      memory: 4G
   healthAddr: ":18081"
   metricsAddr: ":18080"
+  namespace: ""
   healthPort: 18081
   env: [ ]
