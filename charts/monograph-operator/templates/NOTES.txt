@@ -7,6 +7,4 @@ List monograph-operator components :
 
    kubectl get pods --namespace {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
 
-Install completed.
-
-⎈Happy Helming!⎈
+Install completed. ⎈Happy Helming!⎈
