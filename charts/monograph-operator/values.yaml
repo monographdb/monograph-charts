@@ -21,11 +21,11 @@ controllerManager:
   imagePullSecrets: {}
   resources:
     requests:
-      cpu: 5m
-      memory: 64Mi
+      cpu: 2
+      memory: "512Mi"
     limits:
-      cpu: 500m
-      memory: 128Mi
+      cpu: 2
+      memory: "4Gi"
   healthPort: 18080
   metricPort: 18081
   ## Set `watchNamespaces` to watch the specific namespaces, otherwise the controller by default watches all
