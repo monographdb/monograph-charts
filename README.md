@@ -53,7 +53,7 @@ monograph-op-sa"
 
 | Name                                         | Type   | Default Value                            | Description                                                                                                 |
 |----------------------------------------------|--------|------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| nameOverride                                 | string | ""                                       | Overrides the "monograph-operator" with this name.                                                            |
+| nameOverride                                 | string | ""                                       | Overrides the "monograph-operator" with this name.                                                          |
 | controllerManager.serviceAccount.name        | string | monograph-operator-controller-manager-sa | The service account name of the monograph operator controller manager pods.                                 |
 | controllerManager.serviceAccount.annotations | object | {}                                       | Annotations for the `controllerManager.serviceAccount`.                                                     |
 | controllerManager.image.repository           | string | monographdb/monograph-operator           | The image name of the monograph operator.                                                                   |
@@ -67,4 +67,4 @@ monograph-op-sa"
 | controllerManager.serviceMonitor.release     | string | kube-prometheus-stack                    | Set the release name for the controller's metric service monitor.                                           |
 | controllerManager.env                        | list   | []                                       | The environment variable of the monograph operator controller manager pods.                                 |
 | keepCrds                                     | bool   | true                                     | Keep or not keep CRDs when uninstalling the helm release.                                                   |
-| certManager.enabled                          | bool   | false                                    | Set `certManager.enabled=true` will install the cert-menager to `release.namespace`.                        |
+| cert-manager.enabled                         | bool   | false                                    | Set `certManager.enabled=true` will install the cert-menager to `release.namespace`.                        |

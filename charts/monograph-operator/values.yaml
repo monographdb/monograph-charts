@@ -43,5 +43,6 @@ controllerManager:
 ## Setting keepCrds to false will delete CRDs after helm uninstall the release
 keepCrds: true
 
-certManager:
+cert-manager:
+  # -- Install cert-manger. Set to false to use an existing cert-manager
   enabled: false
