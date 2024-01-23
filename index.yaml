@@ -2,6 +2,30 @@ apiVersion: v1
 entries:
   monograph-operator:
   - apiVersion: v1
+    appVersion: 1.0.4
+    created: "2024-01-23T10:03:10.867592344Z"
+    description: A Helm chart for deploying Monograph Operator to Kubernetes.
+    digest: a681471f837811cdd358dea515fd1b68be7acb546fa954353880c26ee903a2b8
+    keywords:
+    - database
+    - newsql
+    - mariadb
+    - mysql
+    - redis
+    - bigtable
+    - cassandra
+    - dynamodb
+    - operator
+    maintainers:
+    - email: weidaolee@gmail.com
+      name: weidaolee
+    - email: 431968368@qq.com
+      name: kuixian
+    name: monograph-operator
+    urls:
+    - https://github.com/monographdb/monograph-charts/releases/download/monograph-operator-1.0.4/monograph-operator-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v1
     appVersion: 1.0.3
     created: "2023-12-26T07:13:44.456748734Z"
     description: monograph-operator Helm chart for Kubernetes
@@ -77,4 +101,4 @@ entries:
     urls:
     - https://github.com/monographdb/monograph-charts/releases/download/monograph-operator-1.0.0/monograph-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2023-12-26T07:13:44.456770083Z"
+generated: "2024-01-23T10:03:10.867609065Z"
