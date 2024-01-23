@@ -1,16 +1,31 @@
 apiVersion: v1
 name: monograph-operator
-description: monograph-operator Helm chart for Kubernetes
-version: 1.0.3
-appVersion: "1.0.3"
+description: A Helm chart for deploying Monograph Operator to Kubernetes.
+version: 1.0.4
+appVersion: "1.0.4"
 keywords:
   - database
   - newsql
   - mariadb
   - mysql
-  - operator
+  - redis
+  - bigtable
+  - cassandra
   - dynamodb
+  - operator
+
+dependencies:
+  - name: cert-manager
+    alias: certmanager
+    repository: https://charts.jetstack.io
+    condition: certManager.enabled
+    version: ">=1.13.1"
+
+source:
+  - https://github.com/monographdb/monograph-operator
 
 maintainers:
+  - name: weidaolee
+    email: weidaolee@gmail.com
   - name: kuixian
     email: 431968368@qq.com

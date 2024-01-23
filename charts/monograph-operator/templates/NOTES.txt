@@ -1,3 +1,12 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+
 List monograph-operator components :
 
-   kubectl get pods  --namespace {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+   kubectl get pods --namespace {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+Install completed.
+
+⎈Happy Helming!⎈

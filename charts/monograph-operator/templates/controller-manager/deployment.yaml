@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monograph-operator.name" . }}-controller-manager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: controller-manager
+    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "monograph-operator.selectorLabels" . | nindent 6 }}
+      {{- include "monograph-operator.controlPlaneLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "monograph-operator.selectorLabels" . | nindent 8 }}
+        {{- include "monograph-operator.controlPlaneLabels" . | nindent 8 }}
+        app.kubernetes.io/component: controller-manager
+    spec:
+      serviceAccountName: {{ .Values.controllerManager.serviceAccount.name }}
+      {{- with .Values.controllerManager.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: {{ include "monograph-operator.name" . }}-webhook-server-cert
+      containers:
+      - name: {{ include "monograph-operator.name" . }}-controller-manager
+        image: {{ .Values.controllerManager.image.repository }}:{{ .Values.controllerManager.image.tag }}
+        imagePullPolicy: {{ .Values.controllerManager.imagePullPolicy | default "IfNotPresent" }}
+        command:
+        - /manager
+        args:
+        - --health-probe-bind-address=:{{ .Values.controllerManager.healthPort }}
+        - --metrics-bind-address=127.0.0.1:{{ .Values.controllerManager.metricPort }}
+        - --namespace={{ .Values.controllerManager.watchNamespaces }}
+        - --webhooks
+        {{- if .Values.controllerManager.enabledLeaderElect }}
+        - --leader-elect
+        {{- end }}
+        ports:
+        - name: healthcheck
+          containerPort: {{ .Values.controllerManager.healthPort }}
+          protocol: TCP
+        - name: webhook-server
+          containerPort: 9443
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.controllerManager.healthPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.controllerManager.healthPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources: {{- toYaml .Values.controllerManager.resources | nindent 10 }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: TZ
+          value: {{ .Values.timezone | default "UTC" }}
+      - name: kube-rbac-proxy
+        image: quay.io/brancz/kube-rbac-proxy:v0.13.1
+        imagePullPolicy: {{ .Values.controllerManager.imagePullPolicy | default "IfNotPresent" }}
+        args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http:://127.0.0.1:{{ .Values.controllerManager.metricPort }}/
+        - --logtostderr=true
+        - --v=0
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL

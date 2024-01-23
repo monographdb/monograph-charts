@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "monograph-operator.name" . }}-selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: certificate
+    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+spec:
+  selfSigned: {}

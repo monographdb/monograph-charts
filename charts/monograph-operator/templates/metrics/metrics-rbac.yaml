@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "monograph-operator.fullname" . }}-metrics-reader-cluster-role
+  labels:
+    app.kubernetes.io/component: kube-rbac-proxy
+    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
