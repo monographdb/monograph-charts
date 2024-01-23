@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "monograph-operator.name" . }}-webhook-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: webhook
+    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "monograph-operator.selectorLabels" . | nindent 4 }}
+    {{- include "monograph-operator.controlPlaneLabels" . | nindent 4 }}
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443

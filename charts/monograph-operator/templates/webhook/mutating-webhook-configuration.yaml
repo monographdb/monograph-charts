@@ -1,0 +1,34 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "monograph-operator.fullname" . }}-mutating-webhook-configuration
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "monograph-operator.name" . }}-serving-cert
+  labels:
+    app.kubernetes.io/component: webhook
+    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: {{ include "monograph-operator.name" . }}-webhook-service
+      namespace: {{ .Release.Namespace }}
+      path: /mutate-monograph-service-monographdb-com-v1alpha1-monographdbcluster
+  failurePolicy: Fail
+  name: mmonographdbcluster.kb.io
+  namespaceSelector:
+    matchExpressions:
+    - key: disable-webhooks
+      operator: DoesNotExist
+  rules:
+  - apiGroups:
+    - monograph-service.monographdb.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - monographdbclusters
+  sideEffects: None

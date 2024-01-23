@@ -2,34 +2,46 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-## @section Name parameters
-## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
-##
-nameOverride: monograph-controller-manager
 timezone: UTC
 appendReleaseSuffix: false
 
 ## controller manager
 controllerManager:
-  serviceAccount: "monograph-operator-sa"
+  serviceAccount:
+    name: "monograph-operator-controller-manager-sa"
+    annotations: {}
   image:
-    repository: 831875755683.dkr.ecr.ap-northeast-1.amazonaws.com/monograph-operator
-    tag: latest
+    repository: monographdb/monograph-operator
+    tag: v1.0.4
   imagePullPolicy: IfNotPresent
   ## In case the above image is pulled from a registry that requires
   ## authentication, a secret containining credentials can be added
   ## imagePullSecrets:
   ##   - secret_with_credentials_to_custom_registry
-  imagePullSecrets: { }
+  imagePullSecrets: {}
   resources:
     requests:
-      cpu: 2
-      memory: "512Mi"
+      cpu: 5m
+      memory: 64Mi
     limits:
-      cpu: 2
-      memory: 4G
-  healthAddr: ":18081"
-  metricsAddr: ":18080"
-  namespace: ""
-  healthPort: 18081
-  env: [ ]
+      cpu: 500m
+      memory: 128Mi
+  healthPort: 18080
+  metricPort: 18081
+  ## Set `watchNamespaces` to watch the specific namespaces, otherwise the controller by default watches all
+  ## MonographDBCluster in all namespaces.
+  ## e.g.
+  ## watchNamespaces: "N1, N2, N3"
+  watchNamespaces: ""
+  enabledLeaderElect: false
+  ## This ServiceMonitor is to serve the metrics of the monograph operator
+  ## controller manager.
+  serviceMonitor:
+    release: kube-prometheus-stack
+  env: []
+
+## Setting keepCrds to false will delete CRDs after helm uninstall the release
+keepCrds: true
+
+certManager:
+  enabled: false
