@@ -177,9 +177,9 @@ rules:
   - patch
   - update
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters
+  - eloqdbclusters
   verbs:
   - create
   - delete
@@ -189,15 +189,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters/finalizers
+  - eloqdbclusters/finalizers
   verbs:
   - update
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters/status
+  - eloqdbclusters/status
   verbs:
   - get
   - patch

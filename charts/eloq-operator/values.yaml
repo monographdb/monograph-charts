@@ -9,7 +9,7 @@ appendReleaseSuffix: false
 controllerManager:
   serviceAccount:
     name: "eloq-operator-controller-manager-sa"
-    annotations: { }
+    annotations: {}
   image:
     repository: monographdb/eloq-operator
     tag: v1.0.4
@@ -18,7 +18,7 @@ controllerManager:
   ## authentication, a secret containining credentials can be added
   ## imagePullSecrets:
   ##   - secret_with_credentials_to_custom_registry
-  imagePullSecrets: { }
+  imagePullSecrets: {}
   resources:
     requests:
       cpu: 1
@@ -38,7 +38,7 @@ controllerManager:
   ## controller manager.
   serviceMonitor:
     release: kube-prometheus-stack
-  env: [ ]
+  env: []
 
 ## Setting keepCrds to false will delete CRDs after helm uninstall the release
 keepCrds: true
