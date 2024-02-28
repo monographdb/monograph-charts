@@ -2,13 +2,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "monograph-operator.name" . }}-controller-manager-metrics-monitor
+  name: {{ include "eloq-operator.name" . }}-controller-manager-metrics-monitor
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: metrics
     release: {{ .Values.controllerManager.serviceMonitor.release }}
-    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
-    {{- include "monograph-operator.controlPlaneLabels" . | nindent 4 }}
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
+    {{- include "eloq-operator.controlPlaneLabels" . | nindent 4 }}
 spec:
   endpoints:
     - path: /metrics
@@ -19,9 +19,9 @@ spec:
         insecureSkipVerify: true
       relabelings:
       - targetLabel: instance
-        replacement: "monograph-controller"
+        replacement: "eloq-controller"
         action: replace
   selector:
     matchLabels:
-      {{- include "monograph-operator.selectorLabels" . | nindent 6 }}
-      {{- include "monograph-operator.controlPlaneLabels" . | nindent 6 }}
+      {{- include "eloq-operator.selectorLabels" . | nindent 6 }}
+      {{- include "eloq-operator.controlPlaneLabels" . | nindent 6 }}

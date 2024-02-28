@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eloq-operator.name" . }}-metrics-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: kube-rbac-proxy
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
+    {{- include "eloq-operator.controlPlaneLabels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "eloq-operator.selectorLabels" . | nindent 4 }}
+    {{- include "eloq-operator.controlPlaneLabels" . | nindent 4 }}
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: https

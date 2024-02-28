@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eloq-operator.name" . }}-webhook-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: webhook
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "eloq-operator.selectorLabels" . | nindent 4 }}
+    {{- include "eloq-operator.controlPlaneLabels" . | nindent 4 }}
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
