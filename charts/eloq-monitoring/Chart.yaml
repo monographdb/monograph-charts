@@ -11,7 +11,7 @@ keywords:
 
 dependencies:
   - name: kube-prometheus-stack
-    version: "~56.13.1"
+    version: "~56.13.0"
     repository: "https://prometheus-community.github.io/helm-charts"
   - name: loki-distributed
     version: "~0.78.3"
@@ -27,4 +27,3 @@ dependencies:
 maintainers:
   - name: MonographDB Inc
     url: https://www.monographdata.com/
-

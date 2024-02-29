@@ -11,7 +11,7 @@ aws:
 kube-prometheus-stack:
   enable: true
   storageSpec:
-    storageClassName: ebs-sc-gp3
+    storageClassName: ebs-sc-sc1
     storageSize: 128Gi
 
 loki-distributed:
@@ -35,7 +35,6 @@ mimir-distributed:
     bucket_name: eloq-mimir-alertmanager
   blocks_storage:
     bucket_name: eloq-mimir-data
-
 
 promtail:
   enabled: true
