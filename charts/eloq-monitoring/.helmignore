@@ -1,0 +1,19 @@
+# Common VCS dirs
+.git/
+.gitignore
+
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+
+# Various IDEs
+.project
+.idea/
+.vscode/
+
+# Other
+*.md
+docs/

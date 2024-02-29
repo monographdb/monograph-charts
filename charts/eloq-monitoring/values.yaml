@@ -1,0 +1,36 @@
+global:
+  namespace: eloq-monitoring-ns
+  serviceAccount:
+    name: eloq-monitoring-sa
+
+aws:
+  region: ap-northeast-1
+  s3:
+    endpoint: s3.ap-northeast-1.amazonaws.com
+
+kube-prometheus-stack:
+  enable: true
+  storageSpec:
+    storageClassName: ebs-sc-sc1
+    storageSize: 128Gi
+
+loki-distributed:
+  enable: true
+  bucketnames: monograph-loki-data
+  ingester:
+    persistence:
+      walStorageSpec:
+        size: 12Gi
+        storageClass: ebs-sc-gp3
+      dataStorageSpec:
+        size: 12Gi
+        storageClass: ebs-sc-gp3
+
+
+
+mimir-distributed:
+  enabled: true
+
+
+promtail:
+  enabled: true

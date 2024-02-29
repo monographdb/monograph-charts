@@ -1,0 +1,68 @@
+{{- if .Values.kube-prometheus-stack.enable }}
+kube-prometheus-stack:
+  grafana:
+    adminPassword: admin
+    service:
+      portName: http-web
+      type: LoadBalancer
+    sidecar:
+      dashboards:
+        folderAnnotation: grafana_folder
+        folder: /tmp/dashboards
+        provider:
+          allowUiUpdates: true
+          foldersFromFilesStructure: true
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClassName: ebs-sc-gp3
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  prometheus:
+    service:
+      type: LoadBalancer
+    prometheusSpec:
+      retention: 14d
+      retentionSize: 96GB
+      scrapeInterval: 3s
+      resources:
+        requests:
+          memory: 400Mi
+      containers:
+        - name: prometheus
+          startupProbe:
+            failureThreshold: 20
+            initialDelaySeconds: 30
+      # remoteRead: []
+      remoteWrite:
+        - url: http://mimir-distributed-gateway.monitoring-system.svc:80/api/v1/push
+          queueConfig:
+            # Number of samples to buffer per shard before we block reading of more
+            # samples from the WAL. It is recommended to have enough capacity in each
+            # shard to buffer several requests to keep throughput up while processing
+            # occasional slow remote requests.
+            batchSendDeadline: 5s
+            # Initial retry delay. Gets doubled for every retry.
+            minBackoff: 100ms
+            # Maximum retry delay.
+            maxBackoff: 10s
+            # Retry upon receiving a 429 status code from the remote-write storage.
+            # This is experimental and might change in the future.
+            retryOnRateLimit: true
+      ## Prometheus StorageSpec for persistent data
+      ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
+      ##
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: {{ .Values.kube-prometheus-stack.storageSpec.storageClassName }}
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: {{ .Values.kube-prometheus-stack.storageSpec.storageSize }}
+          # selector: {}
+  nodeExporter:
+    enabled: false
+{{ - end }}
