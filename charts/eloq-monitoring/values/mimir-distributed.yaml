@@ -73,7 +73,7 @@ alertmanager:
   persistentVolume:
     enabled: true
     size: 1Gi
-    storageClass: { { .Values.mimir.storageClass } }
+    storageClass: {{ .Values.mimir-distributed.storageClass }}
   zoneAwareReplication:
     enabled: false
 
@@ -98,7 +98,7 @@ ingester:
   persistentVolume:
     enabled: true
     size: 128Gi
-    storageClass: { { .Values.mimir.storageClass } }
+    storageClass: {{ .Values.mimir-distributed.storageClass }}
   zoneAwareReplication:
     enabled: false
 
@@ -140,7 +140,7 @@ store_gateway:
   persistentVolume:
     enabled: true
     size: 2Gi
-    storageClass: { { .Values.mimir.storageClass } }
+    storageClass: {{ .Values.mimir-distributed.storageClass }}
 
   zoneAwareReplication:
     enabled: false
@@ -156,7 +156,7 @@ compactor:
   persistentVolume:
     enabled: true
     size: 24Gi
-    storageClass: { { .Values.mimir.storageClass } }
+    storageClass: {{ .Values.mimir-distributed.storageClass }}
 
 chunks-cache:
   enabled: false
