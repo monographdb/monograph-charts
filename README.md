@@ -1,11 +1,12 @@
 ## eloq operator Helm Chart
 
-This chart is used to install `eloq operator` and `EloqDBCluster` related CRD. Please refer to the following
-commands for details.
+The current chart is for installing the eloq-operator (including CRD for `EloqDBCluster`) and the monitoring
+infrastructure used by `EloqDBCluster`.
 
-***Note: Currently only eloq operator installation is supported.***
+> NOTE: The monitoring infrastructure is optional and depends on whether it is already installed in your current
+> environment. They come from the prometheus and grafana communities: prometheus, grafana, lock-distributed, mimir.
 
-### Install
+### Install the eloq-operator
 
 [Helm](https://helm.sh) must be installed to use the charts. Please refer to
 Helm's [documentation](https://helm.sh/docs) to get started.
@@ -13,18 +14,18 @@ Helm's [documentation](https://helm.sh/docs) to get started.
 Once Helm has been set up correctly, add the repo as follows:
 
 ```shell
-helm repo add monograph https://monographdb.github.io/eloq-operator-charts/
+helm repo add eloqdata https://monographdb.github.io/monograph-charts/
 helm repo update
-# for example: helm install eloq-operator monograph/eloq-operator --namespace eloq-operator-system
-helm install [RELEASE_NAME]  monograph/eloq-operator --namespace [NAMESPACE_NAME]
+# for example: helm install eloq-operator eloqdata/eloq-operator --namespace eloq-operator-system
+helm install [RELEASE_NAME]  monographdb/eloq-operator --namespace [NAMESPACE_NAME]
 ```
 
-*Note: If the installation specifies namespace please create it first*
+> NOTE: If the installation specifies namespace please create it first.
 
 ### Check the installed eloq operator
 
 ```shell
-# for example: helm list --namespace eloq-operator / helm list --all --all-namespaces
+# for example: helm list --namespace eloq-operator-system / helm list --all --all-namespaces
 helm list --namespace [NAMESPACE_NAME]
 ```
 
@@ -49,10 +50,10 @@ kubectl delete crd EloqDBClusters.monograph-service.monographdb.com
 Alternatively, setting `keepCrds` to false will result in the automatic deletion of the associated CRDs when the Helm
 release is uninstalled.
 
-### Chart Arguments
+### eloq-operator chart arguments
 
 The following parameters can be overridden by helm --set. For example: --set controllerManager.serviceAccoun="
-monograph-op-sa"
+eloq-op-sa"
 
 | Name                                         | Type   | Default Value                       | Description                                                                                                 |
 |----------------------------------------------|--------|-------------------------------------|-------------------------------------------------------------------------------------------------------------|
@@ -71,3 +72,40 @@ monograph-op-sa"
 | controllerManager.env                        | list   | []                                  | The environment variable of the eloq operator controller manager pods.                                      |
 | keepCrds                                     | bool   | true                                | Keep or not keep CRDs when uninstalling the helm release.                                                   |
 | cert-manager.enabled                         | bool   | false                               | Set `certManager.enabled=true` will install the cert-menager to `release.namespace`.                        |
+
+### Install monitoring infrastructure
+
+Currently, eloq-monitoring only supports AWS. It requires you to create a serviceAccount before execution
+so that it can access AWS resources outside the EKS cluster. This includes S3.
+
+```shell
+# for example: helm install eloq-monitor-stack monographdb/eloq-monitoring --namespace eloq-monitoring-ns
+helm install [RELEASE_NAME] monographdb/eloq-monitoring --namespace [NAMESPACE]
+```
+
+### eloq-monitoring chart arguments
+
+| Name                                                                | Type   | Default value                   | Description                                             |
+|---------------------------------------------------------------------|--------|---------------------------------|---------------------------------------------------------|
+| global.namespace                                                    | string | eloq-monitoring-ns              | Monitor the namespace where the component is installed. |
+| global.serviceAccount.name                                          | string | eloq-monitoring-sa              | ServiceAccount                                          |
+| aws.region                                                          | string | ap-northeast-1                  | AWS configuration.                                      |
+| aws.s3.endpoint                                                     | string | s3.ap-northeast-1.amazonaws.com | S3 endpoint.                                            |
+| kube-prometheus-stack.enable                                        | bool   | true                            | If or not kube-prometheus-stack is installed.           |                                                        
+| kube-prometheus-stack.storageSpec.storageClassName                  | string | ebs-sc-gp3                      |                                                         |
+| kube-prometheus-stack.storageSpec.storageSize                       | string | 128Gi                           |                                                         |
+| loki-distributed.enable                                             | bool   | true                            | If or not loki-distributed is installed.                |
+| loki-distributed.bucketnames                                        | string | eloq-loki-data                  |                                                         |
+| loki-distributed.ingester.persistence.walStorageSpec.size           | string | 12Gi                            |                                                         |
+| loki-distributed.ingester.persistence.dataStorageSpec.size          | string | 12Gi                            |                                                         |
+| loki-distributed.ingester.persistence.walStorageSpec.storageClass   | string | ebs-sc-gp3                      |                                                         |
+| loki-distributed.ingester.persistence.dataStorageSpec.storageClass  | string | ebs-sc-gp3                      |                                                         |
+| mimir-distributed.enabled                                           | bool   | true                            |                                                         |
+| mimir-distributed.ingester.persistence.dataStorageSpec.storageClass | string | ebs-sc-gp3                      |                                                         |
+| mimir-distributed.storageClass                                      | string | ebs-sc-gp3                      |                                                         |
+| mimir-distributed.ruler_storage.bucket_name                         | string | eloq-mimir-ruler                | S3 bucketname of ruler_storage                          |
+| mimir-distributed.alertmanager_storage.bucket_name                  | string | eloq-mimir-alertmanager         | S3 bucketname of alertmanager_storage                   |
+| mimir-distributed.blocks_storage.bucket_name                        | string | eloq-mimir-data                 | S3 bucketname of blocks_storage                         |
+| promtail.enable                                                     | bool   | true                            | If or not promtail is installed.                        |
+
+> NOTE: All of the above S3 bucketname need to already exist.
