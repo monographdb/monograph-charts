@@ -1,10 +1,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "monograph-operator.fullname" . }}-manager-cluster-role
+  name: {{ include "eloq-operator.fullname" . }}-manager-cluster-role
   labels:
     app.kubernetes.io/component: rbac
-    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
 rules:
 - apiGroups:
   - apps
@@ -177,9 +177,9 @@ rules:
   - patch
   - update
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters
+  - eloqdbclusters
   verbs:
   - create
   - delete
@@ -189,15 +189,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters/finalizers
+  - eloqdbclusters/finalizers
   verbs:
   - update
 - apiGroups:
-  - monograph-service.monographdb.com
+  - eloqdbcluster.eloqdata.com
   resources:
-  - monographdbclusters/status
+  - eloqdbclusters/status
   verbs:
   - get
   - patch
@@ -233,14 +233,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "monograph-operator.fullname" . }}-manager-cluster-rolebinding
+  name: {{ include "eloq-operator.fullname" . }}-manager-cluster-rolebinding
   labels:
     app.kubernetes.io/component: rbac
-    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "monograph-operator.fullname" . }}-manager-cluster-role
+  name: {{ include "eloq-operator.fullname" . }}-manager-cluster-role
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.controllerManager.serviceAccount.name }}

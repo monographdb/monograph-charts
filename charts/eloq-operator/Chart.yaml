@@ -1,5 +1,5 @@
 apiVersion: v3
-name: monograph-operator
+name: eloq-operator
 description: A Helm chart for deploying Monograph Operator to Kubernetes.
 version: 1.0.5
 appVersion: "1.0.4"
@@ -22,10 +22,9 @@ dependencies:
     version: ">=1.13.1"
 
 source:
-  - https://github.com/monographdb/monograph-operator
+  - https://github.com/monographdb/eloq-operator
 
 maintainers:
-  - name: weidaolee
-    email: weidaolee@gmail.com
-  - name: kuixian
-    email: 431968368@qq.com
+  - name: MonographDB Inc
+    url: https://www.monographdata.com/
+

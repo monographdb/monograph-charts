@@ -1,4 +1,4 @@
-# Default values for monograph-operator.
+# Default values for eloq-operator.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -8,10 +8,10 @@ appendReleaseSuffix: false
 ## controller manager
 controllerManager:
   serviceAccount:
-    name: "monograph-operator-controller-manager-sa"
+    name: "eloq-operator-controller-manager-sa"
     annotations: {}
   image:
-    repository: monographdb/monograph-operator
+    repository: monographdb/eloq-operator
     tag: v1.0.4
   imagePullPolicy: IfNotPresent
   ## In case the above image is pulled from a registry that requires
@@ -21,11 +21,11 @@ controllerManager:
   imagePullSecrets: {}
   resources:
     requests:
-      cpu: 2
-      memory: "512Mi"
+      cpu: 1
+      memory: "1Gi"
     limits:
-      cpu: 2
-      memory: "4Gi"
+      cpu: 1
+      memory: "1Gi"
   healthPort: 18080
   metricPort: 18081
   ## Set `watchNamespaces` to watch the specific namespaces, otherwise the controller by default watches all

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "monograph-operator.name" . }}-controller-manager
+  name: {{ include "eloq-operator.name" . }}-controller-manager
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: controller-manager
-    {{- include "monograph-operator.commonLabels" . | nindent 4 }}
+    {{- include "eloq-operator.commonLabels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "monograph-operator.selectorLabels" . | nindent 6 }}
-      {{- include "monograph-operator.controlPlaneLabels" . | nindent 6 }}
+      {{- include "eloq-operator.selectorLabels" . | nindent 6 }}
+      {{- include "eloq-operator.controlPlaneLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "monograph-operator.selectorLabels" . | nindent 8 }}
-        {{- include "monograph-operator.controlPlaneLabels" . | nindent 8 }}
+        {{- include "eloq-operator.selectorLabels" . | nindent 8 }}
+        {{- include "eloq-operator.controlPlaneLabels" . | nindent 8 }}
         app.kubernetes.io/component: controller-manager
     spec:
       serviceAccountName: {{ .Values.controllerManager.serviceAccount.name }}
@@ -30,9 +30,9 @@ spec:
       - name: cert
         secret:
           defaultMode: 420
-          secretName: {{ include "monograph-operator.name" . }}-webhook-server-cert
+          secretName: {{ include "eloq-operator.name" . }}-webhook-server-cert
       containers:
-      - name: {{ include "monograph-operator.name" . }}-controller-manager
+      - name: {{ include "eloq-operator.name" . }}-controller-manager
         image: {{ .Values.controllerManager.image.repository }}:{{ .Values.controllerManager.image.tag }}
         imagePullPolicy: {{ .Values.controllerManager.imagePullPolicy | default "IfNotPresent" }}
         command:
