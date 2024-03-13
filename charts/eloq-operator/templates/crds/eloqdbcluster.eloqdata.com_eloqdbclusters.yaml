@@ -682,6 +682,7 @@ spec:
                     - dataStore
                     - image
                     - rocksdbCloud
+                    - schedulePolicy
                     - serviceAccountName
                   type: object
                 store:
@@ -1289,6 +1290,7 @@ spec:
                   required:
                     - dataStore
                     - image
+                    - schedulePolicy
                     - serviceAccountName
                   type: object
               required:
@@ -1308,8 +1310,8 @@ spec:
                   description: Cluster name of the EloqDB cluster.
                   type: string
                 clusterStatus:
-                  default: MonoClusterNotReady
-                  description: 'Status of the EloqDB operator Default: MonoClusterNotReady'
+                  default: EloqClusterPrepared
+                  description: 'Status of the EloqDB operator Default: EloqClusterPrepared'
                   type: string
                 conditions:
                   description: condition of list EloqDB status change
@@ -1360,4 +1362,4 @@ spec:
       served: true
       storage: true
       subresources:
-        status: { }
+        status: {}
