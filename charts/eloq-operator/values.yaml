@@ -12,7 +12,7 @@ controllerManager:
     annotations: {}
   image:
     repository: monographdb/eloq-operator
-    tag: v2.0.0
+    tag: latest
   imagePullPolicy: IfNotPresent
   ## In case the above image is pulled from a registry that requires
   ## authentication, a secret containining credentials can be added
