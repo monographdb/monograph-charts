@@ -59,27 +59,25 @@ spec:
                   description: User-facing protocols.
                   properties:
                     config:
-                      default:
-                        allMatch: true
                       description: The spec of configuration template for eloqCluster.
                         Configurations vary by product type.
                       properties:
-                        allMatch:
-                          default: true
-                          description: 'If not, there must be an existing configuration
-                          item that matches. Default: true'
-                          type: boolean
-                        items:
-                          description: The spec of configuration template for eloqCluster.
-                            Configurations vary by product type.
-                          items:
-                            properties:
-                              name:
-                                type: string
-                              value:
-                                type: string
-                            type: object
-                          type: array
+                        operation:
+                          default: update
+                          description: 'Operation type for modifying cluster startup
+                            configuration Default: update'
+                          enum:
+                          - update
+                          - upsert
+                          - insert
+                          type: string
+                        rawConfig:
+                          description: 'The spec of configuration template for eloqCluster.
+                            Configurations vary by product type. Raw string format,
+                            for eloqkv is like: rawConfig: | [local] maxclients=2048
+                            for eloqsql,  the section name is `mariadb`, the format
+                            is like: rawConfig: | [mariadb] max_connections=2000'
+                          type: string
                       type: object
                     module:
                       description: Module for user interaction with eloq.

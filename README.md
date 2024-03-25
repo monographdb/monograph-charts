@@ -38,7 +38,7 @@ preserving CRDs that you might want to keep for future use or to maintain data i
 To uninstall a Helm release, use the following command:
 
 ```shell
-helm unstall [RELEASE_NAME] --namespace [NAMESPACE_NAME]
+helm uninstall [RELEASE_NAME] --namespace [NAMESPACE_NAME]
 ```
 
 In cases where you wish to delete the CRDs manually, use the following command:
