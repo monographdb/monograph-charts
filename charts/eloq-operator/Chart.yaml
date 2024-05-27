@@ -1,8 +1,8 @@
 apiVersion: v3
 name: eloq-operator
 description: A Helm chart for deploying Monograph Operator to Kubernetes.
-version: 2.0.0
-appVersion: "2.0.0"
+version: 2.0.1
+appVersion: "2.0.1"
 keywords:
   - database
   - newsql
