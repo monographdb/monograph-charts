@@ -1,4 +1,4 @@
-# Prometheus Monitor Service (Metrics)
+{{- if .Values.controllerManager.enabledMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -11,17 +11,18 @@ metadata:
     {{- include "eloq-operator.controlPlaneLabels" . | nindent 4 }}
 spec:
   endpoints:
-    - path: /metrics
-      port: https
-      scheme: https
-      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-      tlsConfig:
-        insecureSkipVerify: true
-      relabelings:
-      - targetLabel: instance
-        replacement: "eloq-controller"
-        action: replace
+  - path: /metrics
+    port: https
+    scheme: https
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    tlsConfig:
+      insecureSkipVerify: true
+    relabelings:
+    - targetLabel: instance
+      replacement: "eloq-controller"
+      action: replace
   selector:
     matchLabels:
       {{- include "eloq-operator.selectorLabels" . | nindent 6 }}
       {{- include "eloq-operator.controlPlaneLabels" . | nindent 6 }}
+{{- end }}

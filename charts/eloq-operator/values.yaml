@@ -33,8 +33,12 @@ controllerManager:
   ## e.g.
   ## watchNamespaces: "N1, N2, N3"
   watchNamespaces: ""
+
   enabledLeaderElect: false
-  ## This ServiceMonitor is to serve the metrics of the monograph operator
+  ## This option is used to control whether to monitor eloq-operator.
+  ## If it is true, the corresponding Service, ServiceMonitor (depends on kube-prometheus-stack) will be deployed.
+  enabledMonitor: false
+  ## This ServiceMonitor is to serve the eloq-operator's metrics
   ## controller manager.
   serviceMonitor:
     release: kube-prometheus-stack
