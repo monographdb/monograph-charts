@@ -3,6 +3,36 @@ entries:
   eloq-monitoring:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-05-28T06:54:36.899049717Z"
+    dependencies:
+    - name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: ~56.13.0
+    - name: loki-distributed
+      repository: https://grafana.github.io/helm-charts
+      version: ~0.78.3
+    - name: promtail
+      repository: https://grafana.github.io/helm-charts
+      version: ~6.15.5
+    - name: mimir-distributed
+      repository: https://grafana.github.io/helm-charts
+      version: ~5.2.1
+    description: A Helm chart for deploying monitoring infra of EloqDB to Kubernetes.
+    digest: dc68d9d975b3e2386c1602838ed5a62c9d808374ed13b0b17de38249de743354
+    keywords:
+    - Prometheus
+    - Grafana
+    - Loki
+    - Promtail
+    maintainers:
+    - name: MonographDB Inc
+      url: https://www.eloqdata.com/
+    name: eloq-monitoring
+    urls:
+    - https://github.com/monographdb/monograph-charts/releases/download/eloq-monitoring-1.0.1/eloq-monitoring-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-03-04T07:33:52.241332908Z"
     dependencies:
     - name: kube-prometheus-stack
@@ -32,6 +62,34 @@ entries:
     - https://github.com/monographdb/monograph-charts/releases/download/eloq-monitoring-1.0.0/eloq-monitoring-1.0.0.tgz
     version: 1.0.0
   eloq-operator:
+  - apiVersion: v3
+    appVersion: 2.0.1
+    created: "2024-05-28T06:54:37.029941372Z"
+    dependencies:
+    - alias: certmanager
+      condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: '>=1.13.1'
+    description: A Helm chart for deploying Monograph Operator to Kubernetes.
+    digest: de35fc2a4bf5d30516fe359af13d305e41a3a3e1724b52fe15abab9678f89e80
+    keywords:
+    - database
+    - newsql
+    - mariadb
+    - mysql
+    - redis
+    - bigtable
+    - cassandra
+    - dynamodb
+    - operator
+    maintainers:
+    - name: MonographDB Inc
+      url: https://www.eloqdata.com/
+    name: eloq-operator
+    urls:
+    - https://github.com/monographdb/monograph-charts/releases/download/eloq-operator-2.0.1/eloq-operator-2.0.1.tgz
+    version: 2.0.1
   - apiVersion: v3
     appVersion: 2.0.0
     created: "2024-03-13T04:15:38.95236012Z"
@@ -219,4 +277,4 @@ entries:
     urls:
     - https://github.com/monographdb/monograph-charts/releases/download/monograph-operator-1.0.0/monograph-operator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-03-13T04:15:38.952377783Z"
+generated: "2024-05-28T06:54:37.029979112Z"
