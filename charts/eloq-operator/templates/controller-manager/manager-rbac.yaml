@@ -76,6 +76,7 @@ rules:
   - create
   - get
   - list
+  - patch
   - update
   - watch
 - apiGroups:
@@ -84,6 +85,7 @@ rules:
   - configmaps/status
   verbs:
   - get
+  - patch
   - update
 - apiGroups:
   - ""
