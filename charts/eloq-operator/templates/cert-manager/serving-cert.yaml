@@ -11,7 +11,7 @@ spec:
   - {{ include "eloq-operator.name" . }}-webhook-service.{{ .Release.Namespace
     }}.svc
   - {{ include "eloq-operator.name" . }}-webhook-service.{{ .Release.Namespace
-    }}.svc.{{ .Values.kubernetesClusterDomain }}
+    }}.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: {{ include "eloq-operator.name" . }}-selfsigned-issuer
