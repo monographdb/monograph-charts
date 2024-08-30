@@ -82,6 +82,8 @@ spec:
               fieldPath: metadata.namespace
         - name: TZ
           value: {{ .Values.timezone | default "UTC" }}
+        - name: ENV_CERT_FILE_PATH
+          value: /tmp/k8s-webhook-server/serving-certs
       - name: kube-rbac-proxy
         image: quay.io/brancz/kube-rbac-proxy:v0.13.1
         imagePullPolicy: {{ .Values.controllerManager.imagePullPolicy | default "IfNotPresent" }}

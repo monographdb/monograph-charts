@@ -31,4 +31,6 @@ webhooks:
     - UPDATE
     resources:
     - monographdbclusters
+    scope: Namespaced
   sideEffects: None
+  timeoutSeconds: 1
