@@ -19,6 +19,10 @@ spec:
         {{- include "eloq-operator.controlPlaneLabels" . | nindent 8 }}
         app.kubernetes.io/component: controller-manager
     spec:
+      {{- if .Values.controllerManager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.controllerManager.nodeSelector | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ .Values.controllerManager.serviceAccount.name }}
       {{- with .Values.controllerManager.imagePullSecrets }}
       imagePullSecrets:
