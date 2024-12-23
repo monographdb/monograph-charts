@@ -7,8 +7,8 @@ appendReleaseSuffix: false
 
 ## controller manager
 controllerManager:
-  # nodeSelector:
-  #   eloqdata.com/node: control-plane
+  nodeSelector:
+    eloqdata.com/node: control-plane
   serviceAccount:
     name: "eloq-operator-controller-manager-sa"
     annotations: {}
