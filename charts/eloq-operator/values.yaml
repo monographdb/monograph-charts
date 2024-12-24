@@ -2,8 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-timezone: UTC
 appendReleaseSuffix: false
+cloudProvider: aws
+k8sClusterName: ""
+timezone: UTC
 
 ## controller manager
 controllerManager:
