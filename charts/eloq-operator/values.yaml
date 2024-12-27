@@ -3,8 +3,9 @@
 # Declare variables to be passed into your templates.
 
 appendReleaseSuffix: false
-cloudProvider: aws
-k8sClusterName: ""
+# cloudProvider: "aws"
+# k8sClusterName: "eloqdb-dev"
+# awsRegion: "ap-northeast-1"
 timezone: UTC
 
 ## controller manager
