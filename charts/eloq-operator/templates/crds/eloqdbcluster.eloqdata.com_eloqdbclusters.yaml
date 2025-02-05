@@ -60,6 +60,15 @@ spec:
           spec:
             description: EloqClusterSpec defines the desired state of a EloqDBCluster
             properties:
+              clusterDeployMode:
+                default: txWithLog
+                description: Which services to deploy
+                enum:
+                - txOnly
+                - logOnly
+                - txWithLog
+                - txWithExternalLog
+                type: string
               frontend:
                 description: User-facing protocols.
                 properties:
@@ -101,7 +110,7 @@ spec:
                     type: string
                   port:
                     description: |-
-                      Port to which the user is connected. This port is currently the connection port for MySQL or Redis.
+                      Port to which the user is connected. This port is currently the connection port for EloqSQL or EloqKV.
                       It is required to be set.
                     type: integer
                 required:
@@ -142,7 +151,7 @@ spec:
                         - path
                         type: object
                       pvc:
-                        description: (Optional) Persistent volume to use
+                        description: VolumeClaim Persistent volume to use
                         properties:
                           efs:
                             description: (Optional) EFS volume
@@ -170,6 +179,12 @@ spec:
                                 - fileSystemId
                                 type: object
                             type: object
+                          localPV:
+                            default: false
+                            description: |-
+                              LocalPV accesses local storage via the standard PVC interface,
+                              and eloq-operator uses openebs dynamic-localpv-provisioner.
+                            type: boolean
                           source:
                             description: (Optional) Existing PVC in the same namespace
                             properties:
@@ -572,6 +587,7 @@ spec:
                             description: BucketPrefix
                             type: string
                           cloudStoreType:
+                            default: s3
                             description: Cloud provider object storage type, s3 (aws
                               s3) or gcs (google cloud storage)
                             type: string
@@ -684,6 +700,20 @@ spec:
                     description: ServiceAccountName For accessing aws resources. (DynamoDB,
                       EBS, ELB)
                     type: string
+                  sharedLogCluster:
+                    description: |-
+                      SharedLogCluster is the external logService cluster,
+                      if configured, the EloqDBCluster would use existed log service
+                    properties:
+                      name:
+                        description: Name log cluster name
+                        type: string
+                      namespace:
+                        type: string
+                    required:
+                    - name
+                    - namespace
+                    type: object
                   storageClassDiskType:
                     default: gp3
                     description: |-
@@ -732,12 +762,6 @@ spec:
                   version:
                     description: Version of EloqDB.
                     type: string
-                required:
-                - dataStore
-                - image
-                - rocksdbCloud
-                - schedulePolicy
-                - serviceAccountName
                 type: object
               store:
                 description: StorageService spec
@@ -822,7 +846,7 @@ spec:
                         - path
                         type: object
                       pvc:
-                        description: (Optional) Persistent volume to use
+                        description: VolumeClaim Persistent volume to use
                         properties:
                           efs:
                             description: (Optional) EFS volume
@@ -850,6 +874,12 @@ spec:
                                 - fileSystemId
                                 type: object
                             type: object
+                          localPV:
+                            default: false
+                            description: |-
+                              LocalPV accesses local storage via the standard PVC interface,
+                              and eloq-operator uses openebs dynamic-localpv-provisioner.
+                            type: boolean
                           source:
                             description: (Optional) Existing PVC in the same namespace
                             properties:
@@ -1397,17 +1427,7 @@ spec:
                   version:
                     description: Version of EloqDB.
                     type: string
-                required:
-                - dataStore
-                - image
-                - schedulePolicy
-                - serviceAccountName
                 type: object
-            required:
-            - frontend
-            - log
-            - store
-            - tx
             type: object
           status:
             description: EloqDBClusterStatus defines the observed state of EloqDBCluster
@@ -1451,7 +1471,7 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               logStatus:
-                default: LogSrvNotReady
+                default: LogSrvUnknown
                 description: Status of the EloqDB LogService
                 type: string
               observedGeneration:
@@ -1465,13 +1485,16 @@ spec:
                 description: Status of the external storage service(DynamoDB | Cassandra).
                 type: string
               txStatus:
-                default: TxSrvNotReady
+                default: TxSrvUnknown
                 description: Status of the EloqDB LogService
                 type: string
             required:
             - clusterName
             - conditions
             type: object
+        required:
+        - metadata
+        - spec
         type: object
     served: true
     storage: true
