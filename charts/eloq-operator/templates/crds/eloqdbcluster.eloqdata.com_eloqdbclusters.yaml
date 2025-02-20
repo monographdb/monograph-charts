@@ -447,10 +447,10 @@ spec:
                         x-kubernetes-list-type: atomic
                     type: object
                   enableMetrics:
-                    default: "off"
+                    default: "on"
                     description: |-
-                      If specified, enable metrics
-                      Default: off
+                      Enabled/disabled metrics
+                      Default: on
                     type: string
                   image:
                     description: Image of the EloqDB component.  (Log/Tx)
@@ -1142,10 +1142,10 @@ spec:
                         x-kubernetes-list-type: atomic
                     type: object
                   enableMetrics:
-                    default: "off"
+                    default: "on"
                     description: |-
-                      If specified, enable metrics
-                      Default: off
+                      Enabled/disabled metrics
+                      Default: on
                     type: string
                   exposedService:
                     default: true
