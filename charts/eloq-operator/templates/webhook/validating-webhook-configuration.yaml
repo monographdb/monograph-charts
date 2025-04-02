@@ -14,23 +14,23 @@ webhooks:
     service:
       name: {{ include "eloq-operator.name" . }}-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-monograph-service-monographdb-com-v1alpha1-monographdbcluster
+      path: /validate-eloqdbcluster-eloqdata-com-v1alpha1-eloqdbcluster
   failurePolicy: Fail
-  name: vmonographdbcluster.kb.io
+  name: veloqdbcluster.kb.io
   namespaceSelector:
     matchExpressions:
     - key: disable-namespace
       operator: DoesNotExist
   rules:
   - apiGroups:
-    - monograph-service.monographdb.com
+    - eloqdbcluster.eloqdata.com
     apiVersions:
     - v1alpha1
     operations:
     - CREATE
     - UPDATE
     resources:
-    - monographdbclusters
+    - eloqdbclusters
     scope: Namespaced
   sideEffects: None
   timeoutSeconds: 1
