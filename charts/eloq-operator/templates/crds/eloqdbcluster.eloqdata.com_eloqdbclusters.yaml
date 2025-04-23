@@ -68,6 +68,7 @@ spec:
                 - logOnly
                 - txWithLog
                 - txWithExternalLog
+                - txWithInternalLog
                 type: string
               frontend:
                 description: User-facing protocols.
@@ -132,6 +133,44 @@ spec:
                   dataStore:
                     description: EloqDB storage configuration
                     properties:
+                      ephemeral:
+                        description: EphemeralVolume ephemeral volume to use
+                        properties:
+                          spec:
+                            description: (Optional) Ephemeral Volume spec
+                            properties:
+                              resources:
+                                description: Ephemeral Volume Resource
+                                properties:
+                                  limits:
+                                    additionalProperties:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                    description: |-
+                                      Limits describes the maximum amount of compute resources allowed.
+                                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                    type: object
+                                  requests:
+                                    additionalProperties:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                    description: |-
+                                      Requests describes the minimum amount of compute resources required.
+                                      If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                      otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                    type: object
+                                type: object
+                            required:
+                            - resources
+                            type: object
+                        type: object
                       hostPath:
                         description: (Optional) Directory from the host node's filesystem
                         properties:
@@ -151,7 +190,7 @@ spec:
                         - path
                         type: object
                       pvc:
-                        description: VolumeClaim Persistent volume to use
+                        description: PersistentVolumeClaim Persistent volume to use
                         properties:
                           efs:
                             description: (Optional) EFS volume
@@ -449,7 +488,7 @@ spec:
                   enableMetrics:
                     default: "on"
                     description: |-
-                      Enabled/disabled metrics
+                      Enabled/disabled the metrics.
                       Default: on
                     type: string
                   image:
@@ -580,9 +619,6 @@ spec:
                       cloudObjectStorage:
                         description: CloudObjectStoreSpec
                         properties:
-                          bucketName:
-                            description: BucketName
-                            type: string
                           bucketPrefix:
                             description: BucketPrefix
                             type: string
@@ -591,13 +627,19 @@ spec:
                             description: Cloud provider object storage type, s3 (aws
                               s3) or gcs (google cloud storage)
                             type: string
+                          objectStoreBucketName:
+                            description: ObjectStoreBucketName
+                            type: string
                           region:
                             description: Region Cloud provider object storage region
                             type: string
+                          txLogBucketName:
+                            description: TxLogBucketName
+                            type: string
                         required:
-                        - bucketName
                         - bucketPrefix
                         - region
+                        - txLogBucketName
                         type: object
                       fileDeletionDelay:
                         default: 3600
@@ -612,9 +654,13 @@ spec:
                         format: int32
                         type: integer
                       sstFileCacheSize:
-                        default: 3GB
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        default: 3Gi
                         description: SSTFileCacheSize Local sst cache size
-                        type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
                     required:
                     - cloudObjectStorage
                     type: object
@@ -776,13 +822,65 @@ spec:
                           type: string
                       type: object
                     type: array
+                  rocksdbCloud:
+                    description: Object storage config.
+                    properties:
+                      cloudObjectStorage:
+                        description: CloudObjectStoreSpec
+                        properties:
+                          bucketPrefix:
+                            description: BucketPrefix
+                            type: string
+                          cloudStoreType:
+                            default: s3
+                            description: Cloud provider object storage type, s3 (aws
+                              s3) or gcs (google cloud storage)
+                            type: string
+                          objectStoreBucketName:
+                            description: ObjectStoreBucketName
+                            type: string
+                          region:
+                            description: Region Cloud provider object storage region
+                            type: string
+                          txLogBucketName:
+                            description: TxLogBucketName
+                            type: string
+                        required:
+                        - bucketPrefix
+                        - region
+                        - txLogBucketName
+                        type: object
+                      fileDeletionDelay:
+                        default: 3600
+                        description: FileDeletionDelay The file deletion delay for
+                          RocksDB Cloud files
+                        format: int32
+                        type: integer
+                      readyTimeout:
+                        default: 10
+                        description: ReadyTimeout Timeout before RocksDB Cloud becoming
+                          ready on new log group leader
+                        format: int32
+                        type: integer
+                      sstFileCacheSize:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        default: 3Gi
+                        description: SSTFileCacheSize Local sst cache size
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                    required:
+                    - cloudObjectStorage
+                    type: object
                   storageType:
-                    description: 'KV storage type: bigtable, cass (cassandra), or
-                      dynamo (dynamodb)'
+                    description: 'KV storage type: bigtable, cass (Cassandra), or
+                      dynamo (Dynamodb), or objectStorage (RocksDB Cloud)'
                     enum:
                     - bigtable
                     - cass
                     - dynamo
+                    - objectStorage
                     type: string
                 required:
                 - storageType
@@ -827,6 +925,44 @@ spec:
                   dataStore:
                     description: EloqDB storage configuration
                     properties:
+                      ephemeral:
+                        description: EphemeralVolume ephemeral volume to use
+                        properties:
+                          spec:
+                            description: (Optional) Ephemeral Volume spec
+                            properties:
+                              resources:
+                                description: Ephemeral Volume Resource
+                                properties:
+                                  limits:
+                                    additionalProperties:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                    description: |-
+                                      Limits describes the maximum amount of compute resources allowed.
+                                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                    type: object
+                                  requests:
+                                    additionalProperties:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                    description: |-
+                                      Requests describes the minimum amount of compute resources required.
+                                      If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                                      otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                                    type: object
+                                type: object
+                            required:
+                            - resources
+                            type: object
+                        type: object
                       hostPath:
                         description: (Optional) Directory from the host node's filesystem
                         properties:
@@ -846,7 +982,7 @@ spec:
                         - path
                         type: object
                       pvc:
-                        description: VolumeClaim Persistent volume to use
+                        description: PersistentVolumeClaim Persistent volume to use
                         properties:
                           efs:
                             description: (Optional) EFS volume
@@ -1144,7 +1280,7 @@ spec:
                   enableMetrics:
                     default: "on"
                     description: |-
-                      Enabled/disabled metrics
+                      Enabled/disabled the metrics.
                       Default: on
                     type: string
                   exposedService:
